@@ -1,7 +1,8 @@
 Android Architecture Components samples
 ===================================
-This is just repush project to my repo, for me studying and apply my skills though this projects:
-Now in on: 
+This is just repush project to my repo, for me studying and apply my skills though this projects.
+
+Now on: 
  * GithubBrowserSample - Project for Multi-Modularizing Android App (codelab)
 
 Finished:
