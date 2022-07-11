@@ -45,10 +45,9 @@ import com.android.example.github.util.RecyclerViewMatcher
 import com.android.example.github.util.TaskExecutorWithIdlingResourceRule
 import com.android.example.github.util.TestUtil
 import com.android.example.github.util.ViewModelUtil
-import com.android.example.github.util.mock
-import com.android.example.github.vo.Contributor
-import com.android.example.github.vo.Repo
-import com.android.example.github.vo.Resource
+import github.room.Contributor
+import github.room.Repo
+import github.model.Resource
 import org.hamcrest.CoreMatchers.not
 import org.junit.Before
 import org.junit.Rule
@@ -67,20 +66,23 @@ class RepoFragmentTest {
     @Rule
     @JvmField
     val activityRule = ActivityTestRule(SingleFragmentActivity::class.java, true, true)
+
     @Rule
     @JvmField
     val executorRule = TaskExecutorWithIdlingResourceRule()
+
     @Rule
     @JvmField
     val countingAppExecutors = CountingAppExecutorsRule()
+
     @Rule
     @JvmField
     val dataBindingIdlingResourceRule = DataBindingIdlingResourceRule(activityRule)
 
-    private val navController = mock<NavController>()
     private val repoLiveData = MutableLiveData<Resource<Repo>>()
     private val contributorsLiveData = MutableLiveData<Resource<List<Contributor>>>()
     private lateinit var viewModel: RepoViewModel
+    private lateinit var navController: NavController
     private lateinit var mockBindingAdapter: FragmentBindingAdapters
 
     private val repoFragment = RepoFragment().apply {
@@ -89,6 +91,7 @@ class RepoFragmentTest {
 
     @Before
     fun init() {
+        navController = mock(NavController::class.java)
         viewModel = mock(RepoViewModel::class.java)
         mockBindingAdapter = mock(FragmentBindingAdapters::class.java)
         doNothing().`when`(viewModel).setId(anyString(), anyString())
@@ -102,8 +105,9 @@ class RepoFragmentTest {
             }
         }
         Navigation.setViewNavController(
-                activityRule.activity.findViewById<View>(R.id.container),
-                navController)
+            activityRule.activity.findViewById<View>(R.id.container),
+            navController
+        )
         activityRule.activity.setFragment(repoFragment)
         EspressoTestUtil.disableProgressBarAnimations(activityRule)
     }
@@ -183,8 +187,8 @@ class RepoFragmentTest {
         setContributors("aa", "bb", "cc")
         onView(withText("cc")).perform(click())
         verify(navController).navigate(
-                eq(RepoFragmentDirections.showUser("cc")),
-                any(FragmentNavigator.Extras::class.java)
+            eq(RepoFragmentDirections.showUser("cc")),
+            any(FragmentNavigator.Extras::class.java)
         )
     }
 

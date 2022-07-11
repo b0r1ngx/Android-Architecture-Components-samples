@@ -26,11 +26,48 @@ import com.android.example.github.GithubApp
 import dagger.android.AndroidInjection
 import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.HasSupportFragmentInjector
+import github.di.Injectable
 
 /**
  * Helper class to automatically inject fragments if they implement [Injectable].
  */
 object AppInjector {
+    fun <T : Comparable<T>> sort(list: List<T>): List<T> {
+
+    }
+
+    data class Point(val x: Int, val y: Int)
+
+    operator fun Point.plus(other: Point) = Point(x + other.x, y + other.y)
+    operator fun Point.minus(other: Point) = Point(x - other.x, y - other.y)
+
+    fun main() {
+        val point1 = Point(10, 20)
+        val point2 = Point(20, 30)
+        println(point1 + point2)
+        println(point1 - point2)                   
+    }
+
+    fun fibonacci() = sequence {
+        var params = Pair(0, 1)
+        while (true) {
+            yield(params.first)
+            params = Pair(params.second, params.first + params.second)
+        }
+    }
+
+    inline fun simple(x: Int): Int{
+        return x * x
+    }
+
+    fun m() {
+        for(count in 1..1000) {
+            simple(count)
+        }
+    }
+
+    class Empty
+
     fun init(githubApp: GithubApp) {
         DaggerAppComponent.builder().application(githubApp)
             .build().inject(githubApp)
@@ -56,7 +93,7 @@ object AppInjector {
 
                 }
 
-                override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {
+                override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {
 
                 }
 

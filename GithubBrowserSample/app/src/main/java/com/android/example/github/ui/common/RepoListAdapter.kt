@@ -21,10 +21,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.android.example.github.AppExecutors
+import github.executor.AppExecutors
 import com.android.example.github.R
 import com.android.example.github.databinding.RepoItemBinding
-import com.android.example.github.vo.Repo
+import github.room.Repo
 
 /**
  * A RecyclerView adapter for [Repo] class.

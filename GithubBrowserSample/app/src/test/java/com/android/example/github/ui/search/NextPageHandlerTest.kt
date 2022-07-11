@@ -18,8 +18,8 @@ package com.android.example.github.ui.search
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import com.android.example.github.repository.RepoRepository
-import com.android.example.github.vo.Resource
+import github.repository.RepoRepository
+import github.model.Resource
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue

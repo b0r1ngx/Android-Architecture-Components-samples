@@ -26,7 +26,7 @@
 
         <variable
             name="repo"
-            type="com.android.example.github.vo.Repo" />
+            type="github.room.Repo" />
     </data>
 
     <androidx.cardview.widget.CardView

@@ -19,13 +19,13 @@
 
     <data>
 
-        <import type="com.android.example.github.vo.Resource" />
+        <import type="github.model.Resource" />
 
-        <import type="com.android.example.github.vo.Status" />
+        <import type="github.model.Status" />
 
         <variable
             name="resource"
-            type="Resource" />
+            type="github.model.Resource" />
 
         <variable
             name="callback"

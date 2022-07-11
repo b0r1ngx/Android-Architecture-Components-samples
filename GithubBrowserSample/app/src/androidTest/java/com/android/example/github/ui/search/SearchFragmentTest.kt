@@ -47,9 +47,8 @@ import com.android.example.github.util.RecyclerViewMatcher
 import com.android.example.github.util.TaskExecutorWithIdlingResourceRule
 import com.android.example.github.util.TestUtil
 import com.android.example.github.util.ViewModelUtil
-import com.android.example.github.util.mock
-import com.android.example.github.vo.Repo
-import com.android.example.github.vo.Resource
+import github.room.Repo
+import github.model.Resource
 import org.hamcrest.CoreMatchers.not
 import org.junit.Before
 import org.junit.Rule
@@ -66,25 +65,29 @@ class SearchFragmentTest {
     @Rule
     @JvmField
     val activityRule = ActivityTestRule(SingleFragmentActivity::class.java, true, true)
+
     @Rule
     @JvmField
     val executorRule = TaskExecutorWithIdlingResourceRule()
+
     @Rule
     @JvmField
     val countingAppExecutors = CountingAppExecutorsRule()
+
     @Rule
     @JvmField
     val dataBindingIdlingResourceRule = DataBindingIdlingResourceRule(activityRule)
 
-    private lateinit var mockBindingAdapter: FragmentBindingAdapters
-    private lateinit var viewModel: SearchViewModel
-    private val navController = mock<NavController>()
     private val results = MutableLiveData<Resource<List<Repo>>>()
     private val loadMoreStatus = MutableLiveData<SearchViewModel.LoadMoreState>()
     private val searchFragment = SearchFragment()
+    private lateinit var viewModel: SearchViewModel
+    private lateinit var navController: NavController
+    private lateinit var mockBindingAdapter: FragmentBindingAdapters
 
     @Before
     fun init() {
+        navController = mock(NavController::class.java)
         viewModel = mock(SearchViewModel::class.java)
         doReturn(loadMoreStatus).`when`(viewModel).loadMoreStatus
         `when`(viewModel.results).thenReturn(results)
@@ -99,8 +102,9 @@ class SearchFragmentTest {
             }
         }
         Navigation.setViewNavController(
-                activityRule.activity.findViewById<View>(R.id.container),
-                navController)
+            activityRule.activity.findViewById<View>(R.id.container),
+            navController
+        )
         activityRule.activity.setFragment(searchFragment)
         EspressoTestUtil.disableProgressBarAnimations(activityRule)
     }
@@ -156,7 +160,7 @@ class SearchFragmentTest {
         results.postValue(Resource.success(arrayListOf(repo)))
         onView(withText("desc")).perform(click())
         verify(navController).navigate(
-                SearchFragmentDirections.showRepo("foo", "bar")
+            SearchFragmentDirections.showRepo("foo", "bar")
         )
     }
 

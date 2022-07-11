@@ -24,13 +24,14 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 
 allOpen {
     // allows mocking for classes w/o directly opening them for release builds
-    annotation 'com.android.example.github.testing.OpenClass'
+    annotation 'github.debug.OpenClass'
 }
+
 android {
+    namespace 'com.android.example.github'
     compileSdkVersion build_versions.target_sdk
-    buildToolsVersion build_versions.build_tools
+
     defaultConfig {
-        applicationId "com.android.example.github"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
         versionCode 1
@@ -54,15 +55,15 @@ android {
         enabled = true
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     sourceSets {
-        androidTest.java.srcDirs += "src/test-common/java"
         test.java.srcDirs += "src/test-common/java"
+        androidTest.java.srcDirs += "src/test-common/java"
     }
     lintOptions {
         lintConfig rootProject.file('lint.xml')
@@ -74,6 +75,17 @@ jacoco {
 }
 
 dependencies {
+    implementation project(":data:api")
+    implementation project(":model")
+    implementation project(":data:repository")
+    implementation project(":data:db")
+    releaseImplementation project(":testing:release")
+    debugImplementation project(":testing:debug")
+    implementation project(":executor")
+    implementation project(":feature:login")
+    implementation project(":env")
+    implementation project(":di")
+
     implementation deps.app_compat
     implementation deps.recyclerview
     implementation deps.cardview
@@ -81,14 +93,8 @@ dependencies {
     implementation deps.core_ktx
     implementation deps.transition
     implementation deps.navigation.fragment_ktx
-    implementation deps.room.runtime
     implementation deps.lifecycle.livedata_ktx
     implementation deps.lifecycle.runtime_ktx
-    implementation deps.lifecycle.java8
-    implementation deps.browser
-    implementation deps.retrofit.runtime
-    implementation deps.retrofit.gson
-    implementation deps.okhttp_logging_interceptor
     implementation deps.glide.runtime
 
     implementation deps.dagger.runtime
@@ -100,12 +106,8 @@ dependencies {
 
     implementation deps.timber
 
-    implementation deps.kotpref.core
-    implementation deps.kotpref.initializer
-
     kapt deps.dagger.android_support_compiler
     kapt deps.dagger.compiler
-    kapt deps.room.compiler
     kapt deps.lifecycle.compiler
 
     testImplementation deps.junit
@@ -134,28 +136,6 @@ dependencies {
 task fullCoverageReport(type: JacocoReport) {
     dependsOn 'createDebugCoverageReport'
     dependsOn 'testDebugUnitTest'
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
-
-    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*',
-                      '**/*Test*.*', 'android/**/*.*',
-                      '**/*_MembersInjector.class',
-                      '**/Dagger*Component.class',
-                      '**/Dagger*Component$Builder.class',
-                      '**/*_*Factory.class',
-                      '**/*ComponentImpl.class',
-                      '**/*SubComponentBuilder.class']
-    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
-    def mainSrc = "${project.projectDir}/src/main/java"
-
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree])
-    executionData = fileTree(dir: "$buildDir", includes: [
-            "jacoco/testDebugUnitTest.exec",
-            "outputs/code-coverage/connected/*coverage.ec"
-    ])
 }
 
 // we need all open to run tests which  a we enable only for debug builds.

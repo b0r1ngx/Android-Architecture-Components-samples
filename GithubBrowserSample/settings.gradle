@@ -14,4 +14,15 @@
  * limitations under the License.
  */
 
-include ':app'
+// Including in order, how I am create a new module
+include ':app',
+        'data:api',
+        ':model',
+        'data:repository',
+        'data:db',
+        'testing:release',
+        'testing:debug',
+        ':executor',
+        'feature:login',
+        ':env',
+        ':di'

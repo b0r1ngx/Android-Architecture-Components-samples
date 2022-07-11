@@ -32,6 +32,7 @@ import javax.inject.Singleton
         LoginActivityModule::class
     ]
 )
+
 interface AppComponent {
     @Component.Builder
     interface Builder {

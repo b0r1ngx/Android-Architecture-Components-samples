@@ -19,14 +19,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
-        <import type="com.android.example.github.vo.Status" />
-
-        <import type="com.android.example.github.vo.Resource" />
-
+        <import type="github.model.Status" />
+        <import type="github.model.Resource" />
         <import type="androidx.lifecycle.LiveData"/>
-
-        <import type="com.android.example.github.vo.Repo"/>
+        <import type="github.room.Repo"/>
 
         <variable
             name="repo"

@@ -18,14 +18,15 @@ package com.android.example.github.repository
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.android.example.github.api.GithubService
-import com.android.example.github.api.RepoSearchResponse
-import com.android.example.github.db.GithubDb
-import com.android.example.github.db.RepoDao
+import github.api.GithubService
+import github.api.RepoSearchResponse
+import github.db.GithubDb
+import github.db.RepoDao
 import com.android.example.github.util.TestUtil
 import com.android.example.github.util.mock
-import com.android.example.github.vo.RepoSearchResult
-import com.android.example.github.vo.Resource
+import github.db.RepoSearchResult
+import github.model.Resource
+import github.repository.FetchNextSearchPageTask
 import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.ResponseBody

@@ -41,10 +41,9 @@ import com.android.example.github.util.RecyclerViewMatcher
 import com.android.example.github.util.TaskExecutorWithIdlingResourceRule
 import com.android.example.github.util.TestUtil
 import com.android.example.github.util.ViewModelUtil
-import com.android.example.github.util.mock
-import com.android.example.github.vo.Repo
-import com.android.example.github.vo.Resource
-import com.android.example.github.vo.User
+import github.room.Repo
+import github.model.Resource
+import github.room.User
 import org.hamcrest.CoreMatchers.not
 import org.junit.Before
 import org.junit.Rule
@@ -61,26 +60,32 @@ class UserFragmentTest {
     @Rule
     @JvmField
     val activityRule = ActivityTestRule(SingleFragmentActivity::class.java, true, true)
+
     @Rule
     @JvmField
     val executorRule = TaskExecutorWithIdlingResourceRule()
+
     @Rule
     @JvmField
     val countingAppExecutors = CountingAppExecutorsRule()
+
     @Rule
     @JvmField
     val dataBindingIdlingResourceRule = DataBindingIdlingResourceRule(activityRule)
-    private lateinit var viewModel: UserViewModel
-    private lateinit var mockBindingAdapter: FragmentBindingAdapters
-    private val navController = mock<NavController>()
+    
     private val userData = MutableLiveData<Resource<User>>()
     private val repoListData = MutableLiveData<Resource<List<Repo>>>()
+    private lateinit var viewModel: UserViewModel
+    private lateinit var navController: NavController
+    private lateinit var mockBindingAdapter: FragmentBindingAdapters
+
     private val testFragment = UserFragment().apply {
         arguments = UserFragmentArgs("foo").toBundle()
     }
 
     @Before
     fun init() {
+        navController = mock(NavController::class.java)
         viewModel = mock(UserViewModel::class.java)
         `when`(viewModel.user).thenReturn(userData)
         `when`(viewModel.repositories).thenReturn(repoListData)
@@ -95,8 +100,9 @@ class UserFragmentTest {
             }
         }
         Navigation.setViewNavController(
-                activityRule.activity.findViewById<View>(R.id.container),
-                navController)
+            activityRule.activity.findViewById<View>(R.id.container),
+            navController
+        )
         activityRule.activity.setFragment(testFragment)
         activityRule.runOnUiThread {
             testFragment.binding.repoList.itemAnimator = null
@@ -151,7 +157,7 @@ class UserFragmentTest {
         }
         val repo3 = setRepos(3)[2]
         onView(listMatcher().atPosition(2)).check(
-                matches(hasDescendant(withText(repo3.name)))
+            matches(hasDescendant(withText(repo3.name)))
         )
     }
 
@@ -161,7 +167,7 @@ class UserFragmentTest {
         val selected = repos[1]
         onView(withText(selected.description)).perform(click())
         verify(navController).navigate(
-                UserFragmentDirections.showRepo(selected.owner.login, selected.name)
+            UserFragmentDirections.showRepo(selected.owner.login, selected.name)
         )
     }
 

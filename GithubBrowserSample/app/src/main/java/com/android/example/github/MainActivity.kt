@@ -20,8 +20,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.android.example.github.repository.AccessTokenRepository
-import com.android.example.github.ui.login.LoginActivity
+import github.repository.AccessTokenRepository
+import github.login.LoginActivity
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
 import javax.inject.Inject

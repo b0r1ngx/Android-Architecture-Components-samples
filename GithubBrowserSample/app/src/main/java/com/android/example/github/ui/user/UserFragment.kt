@@ -30,11 +30,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
-import com.android.example.github.AppExecutors
+import github.executor.AppExecutors
 import com.android.example.github.R
 import com.android.example.github.binding.FragmentDataBindingComponent
 import com.android.example.github.databinding.UserFragmentBinding
-import com.android.example.github.di.Injectable
+import github.di.Injectable
 import com.android.example.github.ui.common.RepoListAdapter
 import com.android.example.github.ui.common.RetryCallback
 import com.android.example.github.util.autoCleared
@@ -48,6 +48,7 @@ import javax.inject.Inject
 class UserFragment : Fragment(), Injectable {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+
     @Inject
     lateinit var appExecutors: AppExecutors
 
@@ -63,7 +64,7 @@ class UserFragment : Fragment(), Injectable {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val dataBinding = DataBindingUtil.inflate<UserFragmentBinding>(
             inflater,
             R.layout.user_fragment,
@@ -71,21 +72,35 @@ class UserFragment : Fragment(), Injectable {
             false,
             dataBindingComponent
         )
+
         dataBinding.retryCallback = object : RetryCallback {
             override fun retry() {
                 userViewModel.retry()
             }
         }
+
         binding = dataBinding
-        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.move)
+        sharedElementEnterTransition =
+            TransitionInflater.from(requireContext()).inflateTransition(R.transition.move)
         // When the image is loaded, set the image request listener to start the transaction
-        binding.imageRequestListener = object: RequestListener<Drawable> {
-            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+        binding.imageRequestListener = object : RequestListener<Drawable> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<Drawable>?,
+                isFirstResource: Boolean
+            ): Boolean {
                 startPostponedEnterTransition()
                 return false
             }
 
-            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+            override fun onResourceReady(
+                resource: Drawable?,
+                model: Any?,
+                target: Target<Drawable>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
                 startPostponedEnterTransition()
                 return false
             }
@@ -106,7 +121,12 @@ class UserFragment : Fragment(), Injectable {
             appExecutors = appExecutors,
             showFullName = false
         ) { repo ->
-            findNavController().navigate(UserFragmentDirections.showRepo(repo.owner.login, repo.name))
+            findNavController().navigate(
+                UserFragmentDirections.showRepo(
+                    repo.owner.login,
+                    repo.name
+                )
+            )
         }
         binding.repoList.adapter = rvAdapter
         this.adapter = rvAdapter

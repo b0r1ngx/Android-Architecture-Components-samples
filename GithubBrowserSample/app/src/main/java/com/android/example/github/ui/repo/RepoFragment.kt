@@ -31,11 +31,11 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
-import com.android.example.github.AppExecutors
+import github.executor.AppExecutors
 import com.android.example.github.R
 import com.android.example.github.binding.FragmentDataBindingComponent
 import com.android.example.github.databinding.RepoFragmentBinding
-import com.android.example.github.di.Injectable
+import github.di.Injectable
 import com.android.example.github.ui.common.RetryCallback
 import com.android.example.github.util.autoCleared
 import javax.inject.Inject
@@ -77,20 +77,21 @@ class RepoFragment : Fragment(), Injectable {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val dataBinding = DataBindingUtil.inflate<RepoFragmentBinding>(
             inflater,
             R.layout.repo_fragment,
             container,
             false
         )
+
         dataBinding.retryCallback = object : RetryCallback {
             override fun retry() {
                 repoViewModel.retry()
             }
         }
         binding = dataBinding
-        sharedElementReturnTransition = TransitionInflater.from(context).inflateTransition(R.transition.move)
+        sharedElementReturnTransition = TransitionInflater.from(requireContext()).inflateTransition(R.transition.move)
         return dataBinding.root
     }
 

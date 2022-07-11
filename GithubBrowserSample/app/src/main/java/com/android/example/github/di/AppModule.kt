@@ -18,70 +18,55 @@ package com.android.example.github.di
 
 import android.app.Application
 import androidx.room.Room
-import com.android.example.github.api.AuthenticationInterceptor
-import com.android.example.github.api.GithubAuthService
-import com.android.example.github.api.GithubService
-import com.android.example.github.db.GithubDb
-import com.android.example.github.db.RepoDao
-import com.android.example.github.db.UserDao
-import com.android.example.github.util.LiveDataCallAdapterFactory
+import com.android.example.github.BuildConfig
+import github.api.GithubAuthService
+import github.db.GithubDb
 import dagger.Module
 import dagger.Provides
-import okhttp3.OkHttpClient
+import github.api.GithubService
+import github.apibuilder.ApiBuilder
+import github.env.Env
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module(includes = [ViewModelModule::class])
 class AppModule {
     @Singleton
     @Provides
-    fun provideGithubService(
-        authenticationInterceptor: AuthenticationInterceptor
-    ): GithubService {
-        val client = OkHttpClient.Builder()
-            .addNetworkInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
-            .addInterceptor(authenticationInterceptor)
-            .build()
-
-        return Retrofit.Builder()
-            .baseUrl("https://api.github.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(LiveDataCallAdapterFactory())
-            .client(client)
-            .build()
-            .create(GithubService::class.java)
-    }
+    fun provideGithubService(apiBuilder: ApiBuilder): GithubService =
+        apiBuilder.provideGithubService(
+            logLevel = HttpLoggingInterceptor.Level.BODY
+        )
 
     @Singleton
     @Provides
-    fun provideGithubAuthService(): GithubAuthService {
-        return Retrofit.Builder()
-            .baseUrl("https://github.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(GithubAuthService::class.java)
-    }
+    fun provideGithubAuthService(apiBuilder: ApiBuilder): GithubAuthService =
+        apiBuilder.provideGithubAuthService()
 
     @Singleton
     @Provides
-    fun provideDb(app: Application): GithubDb {
-        return Room
-            .databaseBuilder(app, GithubDb::class.java, "github.db")
-            .fallbackToDestructiveMigration()
-            .build()
-    }
+    fun provideDb(app: Application) = Room
+        .databaseBuilder(app, GithubDb::class.java, "github.db")
+        .fallbackToDestructiveMigration()
+        .build()
+
 
     @Singleton
     @Provides
-    fun provideUserDao(db: GithubDb): UserDao {
-        return db.userDao()
-    }
+    fun provideUserDao(db: GithubDb) = db.userDao()
 
     @Singleton
     @Provides
-    fun provideRepoDao(db: GithubDb): RepoDao {
-        return db.repoDao()
-    }
+    fun provideRepoDao(db: GithubDb) = db.repoDao()
+
+    @Singleton
+    @Provides
+    fun provideEnv() =
+        object : Env {
+            override val GITHUB_CLIENT_ID: String
+                get() = BuildConfig.GITHUB_CLIENT_ID
+
+            override val GITHUB_CLIENT_SECRET: String
+                get() = BuildConfig.GITHUB_CLIENT_SECRET
+        }
 }
